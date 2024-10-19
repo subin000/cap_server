@@ -197,10 +197,18 @@ app.put('/api/user/update-password', verifyToken, async (req, res) => {
   }
 });
 
-// Root Route
-app.get('/', (req, res) => {
-  res.send('Hello World!');
+app.get('/', async (req, res) => {
+  console.log('Request received');
+  try {
+    const data = await fetchData(); // Your fetching logic
+    console.log('Data fetched successfully');
+    res.json(data);
+  } catch (error) {
+    console.error('Error fetching data:', error);
+    res.status(500).send('Server error');
+  }
 });
+
 
 // Serverless export for AWS Lambda or similar
 module.exports = serverless(app);
