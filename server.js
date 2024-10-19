@@ -137,6 +137,8 @@ app.post('/login', async (req, res) => {
   }
 });
 
+app.get('/favicon.ico', (req, res) => res.status(204)); // No Content
+
 // Middleware to verify JWT token
 const verifyToken = (req, res, next) => {
   const token = req.headers.authorization;
