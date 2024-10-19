@@ -5,6 +5,7 @@ const bcrypt = require('bcrypt');
 const cors = require('cors');
 const jwt = require('jsonwebtoken');
 const bodyParser = require('body-parser');
+const serverless = require('serverless-http');
 require('dotenv').config();
 const app = express();
 app.use(cors());
@@ -200,7 +201,4 @@ app.put('/api/user/update-password', verifyToken, async (req, res) => {
 });
 
 
-// Start the server
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
+module.exports.handler = serverless(app);
