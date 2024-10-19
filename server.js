@@ -165,6 +165,10 @@ app.get('/api/user/account', verifyToken, async (req, res) => {
   }
 });
 
+app.get('/', (req, res) => {
+    res.send('Hello World!');
+});
+
 // Update Password Route (Node.js example)
 app.put('/api/user/update-password', verifyToken, async (req, res) => {
   const { currentPassword, newPassword } = req.body;
