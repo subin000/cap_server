@@ -201,4 +201,4 @@ app.get('/', (req, res) => {
 });
 
 // Serverless export for AWS Lambda or similar
-module.exports.handler = serverless(app);
+module.exports = serverless(app);
