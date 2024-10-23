@@ -94,6 +94,7 @@ app.post('/signup', async (req, res) => {
 app.post('/login', async (req, res) => {
   try {
     const { email, mobileNumber, pin, otp } = req.body;
+    console.log(email + mobileNumber, pin, otp);
 
     // Handle login via email and pin
     if (email) {
