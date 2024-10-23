@@ -210,5 +210,6 @@ app.get('/', async (req, res) => {
 });
 
 
-// Serverless export for AWS Lambda or similar
-module.exports = serverless(app);
+app.listen(port, () => {
+  console.log(`Example app listening on port ${port}`)
+})
