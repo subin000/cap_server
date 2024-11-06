@@ -287,6 +287,66 @@ app.get("/crises", async (req, res) => {
   }
 });
 
+const eventSchema = new mongoose.Schema({
+  title: { type: String },
+  description: { type: String },
+  date: { type: Date },
+  latitude: { type: Number },
+  longitude: { type: Number },
+  skillsRequired: { type: String },
+  volunteers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }]
+});
+const Event = mongoose.model('Event', eventSchema);
+
+app.get("/events", async (req, res) => {
+  try {
+    const events = await Event.find({});
+    res.status(200).json(events);
+  } catch (error) {
+    console.error("Error fetching events:", error);
+    res.status(500).json({ message: "Error fetching events" });
+  }
+});
+
+app.post('/create', async (req, res) => {
+  const { title, description, date, latitude, longitude } = req.body;
+  
+  try {
+    const newEvent = new Event({
+      title,
+      description,
+      date,
+      latitude,
+      longitude,
+      volunteers: []
+    });
+    
+    await newEvent.save();
+    res.status(201).json({ message: 'Event created successfully', event: newEvent });
+  } catch (error) {
+    res.status(500).json({ message: 'Error creating event', error });
+  }
+});
+
+app.post('/:eventId/volunteer', async (req, res) => {
+  const { eventId } = req.params;
+  const { userId } = req.body;
+
+  try {
+    const event = await Event.findById(eventId);
+    if (!event) return res.status(404).json({ message: 'Event not found' });
+
+    if (!event.volunteers.includes(userId)) {
+      event.volunteers.push(userId);
+      await event.save();
+    }
+
+    res.json({ message: 'User added as volunteer', event });
+  } catch (error) {
+    res.status(500).json({ message: 'Error volunteering for event', error });
+  }
+});
+
 // Start Server with HTTP and WebSocket (Socket.io) support
 server.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
