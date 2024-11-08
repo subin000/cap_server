@@ -72,7 +72,7 @@ const User = mongoose.model('User', userSchema);
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: "https://nmims-ebon.vercel.app",
+    origin: "*",
     methods: ["GET", "POST"]
   }
 });
