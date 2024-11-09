@@ -289,13 +289,15 @@ app.get("/crises", async (req, res) => {
 });
 
 const eventSchema = new mongoose.Schema({
-  title: { type: String },
-  description: { type: String },
-  date: { type: Date },
-  location: { type: String },
+  title: { type: String, required: true },
+  description: { type: String, required: true },
+  date: { type: Date, required: true },
+  location: { type: String, required: true },
   skillsRequired: { type: String },
-  volunteers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }]
+  volunteers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User ' }],
+  host: { type: mongoose.Schema.Types.ObjectId, ref: 'User ', required: true } // Add host field
 });
+
 const Event = mongoose.model('Event', eventSchema);
 
 app.get("/events", async (req, res) => {
@@ -308,28 +310,34 @@ app.get("/events", async (req, res) => {
   }
 });
 
-app.post('/create', async (req, res) => {
-  const { title, description, date, location } = req.body;
-  
+// Create a new event
+app.post('/create', verifyToken, async (req, res) => {
+  const { title, description, date, location, skillsRequired } = req.body;
+  const userId = req.userId; // Get userId from the request object
+
   try {
     const newEvent = new Event({
       title,
       description,
       date,
       location,
-      volunteers: []
+      skillsRequired,
+      volunteers: [],
+      host: userId // Set the host to the current user's ID
     });
-    
+
     await newEvent.save();
     res.status(201).json({ message: 'Event created successfully', event: newEvent });
   } catch (error) {
+    console.error('Error creating event:', error);
     res.status(500).json({ message: 'Error creating event', error });
   }
 });
 
-app.post('/:eventId/volunteer', async (req, res) => {
+// Volunteer for an event
+app.post('/:eventId/volunteer', verifyToken, async (req, res) => {
   const { eventId } = req.params;
-  const { userId } = req.body;
+  const userId = req.userId; // Get userId from the request object
 
   try {
     const event = await Event.findById(eventId);
@@ -340,8 +348,9 @@ app.post('/:eventId/volunteer', async (req, res) => {
       await event.save();
     }
 
-    res.json({ message: 'User added as volunteer', event });
+    res.json({ message: 'User  added as volunteer', event });
   } catch (error) {
+    console.error('Error volunteering for event:', error);
     res.status(500).json({ message: 'Error volunteering for event', error });
   }
 });
