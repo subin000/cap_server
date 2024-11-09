@@ -348,9 +348,9 @@ app.post('/:eventId/volunteer', async (req, res) => {
 
 app.get('/news', async (req, res) => {
   try {
-    const response = await axios.get('https://newsapi.org/v2/top-headlines', {
+    const response = await axios.get('https://newsapi.org/v2/everything', {
       params: {
-        country: 'us',
+        country: 'in',
         apiKey: '1ee17a07805e4ab8b52f359a44e4e026',
       },
     });
