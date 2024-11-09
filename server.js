@@ -292,8 +292,7 @@ const eventSchema = new mongoose.Schema({
   title: { type: String },
   description: { type: String },
   date: { type: Date },
-  latitude: { type: Number },
-  longitude: { type: Number },
+  location: { type: String },
   skillsRequired: { type: String },
   volunteers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }]
 });
@@ -310,15 +309,14 @@ app.get("/events", async (req, res) => {
 });
 
 app.post('/create', async (req, res) => {
-  const { title, description, date, latitude, longitude } = req.body;
+  const { title, description, date, location } = req.body;
   
   try {
     const newEvent = new Event({
       title,
       description,
       date,
-      latitude,
-      longitude,
+      location,
       volunteers: []
     });
     
