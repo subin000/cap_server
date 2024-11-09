@@ -355,6 +355,38 @@ app.post('/:eventId/volunteer', verifyToken, async (req, res) => {
   }
 });
 
+// Route to get hosted events for the authenticated user
+app.get('/hosted-events', verifyToken, async (req, res) => {
+  try {
+    // Find the user by ID and populate hosted events
+    const user = await User.findById(req.userId).populate('hostedEvents');
+    if (!user) {
+      return res.status(404).json({ message: 'User  not found' });
+    }
+    res.status(200).json(user.hostedEvents); // Return the hosted events
+  } catch (error) {
+    console.error("Error fetching hosted events:", error);
+    res.status(500).json({ message: "Error fetching hosted events" });
+  }
+});
+
+// Route to delete an event
+app.delete('/events/:eventId', verifyToken, async (req, res) => {
+  const { eventId } = req.params;
+
+  try {
+    // Find the event and delete it
+    const event = await Event.findByIdAndDelete(eventId);
+    if (!event) {
+      return res.status(404).json({ message: 'Event not found' });
+    }
+    res.status(200).json({ message: 'Event deleted successfully' });
+  } catch (error) {
+    console.error("Error deleting event:", error);
+    res.status(500).json({ message: "Error deleting event" });
+  }
+});
+
 app.get('/news', async (req, res) => {
   try {
     const response = await axios.get('https://newsapi.org/v2/top-headlines', {
