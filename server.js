@@ -347,6 +347,20 @@ app.post('/:eventId/volunteer', async (req, res) => {
   }
 });
 
+app.get('/news', async (req, res) => {
+  try {
+    const response = await axios.get('https://newsapi.org/v2/top-headlines', {
+      params: {
+        country: 'us',
+        apiKey: '1ee17a07805e4ab8b52f359a44e4e026',
+      },
+    });
+    res.json(response.data);
+  } catch (error) {
+    res.status(error.response?.status || 500).json({ error: error.message });
+  }
+});
+
 // Start Server with HTTP and WebSocket (Socket.io) support
 server.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
