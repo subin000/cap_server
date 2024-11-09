@@ -51,7 +51,8 @@ const userSchema = new mongoose.Schema({
       relation: String,
       contactNumber: String,
     }
-  ]
+  ],
+  hostedEvents: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Event' }] // Add this line
 });
 
 // Pre-save hook for password hashing
@@ -327,6 +328,10 @@ app.post('/create', verifyToken, async (req, res) => {
     });
 
     await newEvent.save();
+
+    // Update the user to include this event in their hostedEvents
+    await User.findByIdAndUpdate(userId, { $push: { hostedEvents: newEvent._id } });
+
     res.status(201).json({ message: 'Event created successfully', event: newEvent });
   } catch (error) {
     console.error('Error creating event:', error);
