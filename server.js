@@ -379,7 +379,7 @@ app.get('/userevents', verifyToken, async (req, res) => {
     const userId = req.userId;
 
     if (!userId) {
-        return res.status(400).json({ error: "User-ID header is missing" });
+        return res.status(400).json({ error: "User -ID header is missing" });
     }
 
     try {
