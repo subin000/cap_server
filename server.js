@@ -34,25 +34,59 @@ mongoose.connect(process.env.MONGO)
   .catch(err => console.error('MongoDB connection error:', err));
 
 // User Schema & Model
+const personalInfoSchema = new mongoose.Schema({
+  firstName: { type: String, required: true },
+  middleName: { type: String },
+  lastName: { type: String, required: true },
+  age: { type: Number, required: true },
+  bloodGroup: { type: String, required: true },
+  address: {
+      flatNo: { type: String, required: true },
+      area: { type: String, required: true },
+      landmark: { type: String },
+      pincode: { type: String, required: true },
+      city: { type: String, required: true }
+  },
+  contactInfo: {
+      email: { type: String, required: true }
+  },
+  insuranceNumber: { type: String },
+  physicalAttributes: {
+      height: { type: Number },
+      heightUnit: { type: String, enum: ['cm', 'feet'] },
+      weight: { type: Number },
+      weightUnit: { type: String, enum: ['kg', 'lb'] }
+  },
+  medicalInfo: {
+      allergies: { type: String },
+      medication: { type: String }
+  },
+  createdAt: { type: Date, default: Date.now }
+});
+
+
 const userSchema = new mongoose.Schema({
   fullName: String,
   dob: {
-    day: String,
-    month: String,
-    year: String
+      day: String,
+      month: String,
+      year: String
   },
   gender: String,
   mobileNumber: String,
   email: { type: String, unique: true },
   pin: String,
   emergencyContacts: [
-    {
-      fullName: String,
-      relation: String,
-      contactNumber: String,
-    }
+      {
+          fullName: String,
+          relation: String,
+          contactNumber: String,
+      }
   ],
-  hostedEvents: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Event' }] // Add this line
+  hostedEvents: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Event' }],
+  
+  // Add personalInfo as a subdocument
+  personalInfo: personalInfoSchema
 });
 
 // Pre-save hook for password hashing
@@ -407,6 +441,48 @@ app.delete('/events/:eventId', verifyToken, async (req, res) => {
   } catch (error) {
     console.error("Error deleting event:", error);
     res.status(500).json({ message: "Error deleting event" });
+  }
+});
+
+// Add/Update Personal Information Route
+app.post('/personal-info', verifyToken, async (req, res) => {
+  try {
+      const userId = req.userId;
+      const personalInfoData = req.body;
+
+      // Find the user and update their personal information
+      const updatedUser = await User.findByIdAndUpdate(
+          userId, 
+          { personalInfo: personalInfoData }, 
+          { new: true, upsert: true }
+      );
+
+      res.status(200).json({
+          message: 'Personal Information updated successfully',
+          personalInfo: updatedUser.personalInfo
+      });
+  } catch (error) {
+      console.error('Error updating personal info:', error);
+      res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+// Get Personal Information Route
+app.get('/personal-info', verifyToken, async (req, res) => {
+  try {
+      const userId = req.userId;
+      const user = await User.findById(userId);
+
+      if (!user) {
+          return res.status(404).json({ message: 'User not found' });
+      }
+
+      res.status(200).json({
+          personalInfo: user.personalInfo || null
+      });
+  } catch (error) {
+      console.error('Error fetching personal info:', error);
+      res.status(500).json({ message: 'Internal server error' });
   }
 });
 
