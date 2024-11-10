@@ -493,6 +493,38 @@ app.get('/news', async (req, res) => {
   }
 });
 
+app.delete('/personal-info/delete',verifyToken, async (req, res) => {
+  const userId = req.userId; // assuming user authentication middleware provides the user ID
+  try {
+      await User.updateOne({ _id: userId }, { $unset: { personalInfo: "" } });
+      res.status(200).send({ message: "Personal info deleted successfully" });
+  } catch (error) {
+      res.status(500).send({ message: "Error deleting personal info", error });
+  }
+});
+
+app.post('/personal-info/update', verifyToken, async (req, res) => {
+  try {
+      const userId = req.userId;
+      const personalInfoData = req.body;
+
+      // Update personal info
+      const updatedUser = await User.findByIdAndUpdate(
+          userId, 
+          { personalInfo: personalInfoData }, 
+          { new: true, upsert: true }
+      );
+
+      res.status(200).json({
+          message: 'Personal Information updated successfully',
+          personalInfo: updatedUser.personalInfo
+      });
+  } catch (error) {
+      console.error('Error updating personal info:', error);
+      res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
 // Start Server with HTTP and WebSocket (Socket.io) support
 server.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
