@@ -40,27 +40,19 @@ const personalInfoSchema = new mongoose.Schema({
   lastName: { type: String, required: true },
   age: { type: Number, required: true },
   bloodGroup: { type: String, required: true },
-  address: {
-      flatNo: { type: String, required: true },
-      area: { type: String, required: true },
-      landmark: { type: String },
-      pincode: { type: String, required: true },
-      city: { type: String, required: true }
-  },
-  contactInfo: {
-      email: { type: String, required: true }
-  },
+  flatNo: { type: String, required: true },
+  area: { type: String, required: true },
+  landmark: { type: String },
+  pincode: { type: String, required: true },
+  city: { type: String, required: true },
+  email: { type: String, required: true },
   insuranceNumber: { type: String },
-  physicalAttributes: {
-      height: { type: Number },
-      heightUnit: { type: String, enum: ['cm', 'feet'] },
-      weight: { type: Number },
-      weightUnit: { type: String, enum: ['kg', 'lb'] }
-  },
-  medicalInfo: {
-      allergies: { type: String },
-      medication: { type: String }
-  },
+  height: { type: Number },
+  heightUnit: { type: String, enum: ['cm', 'feet'] },
+  weight: { type: Number },
+  weightUnit: { type: String, enum: ['kg', 'lb'] },
+  allergies: { type: String },
+  medication: { type: String },
   createdAt: { type: Date, default: Date.now }
 });
 
