@@ -401,8 +401,8 @@ app.get('/hosted-events', verifyToken, async (req, res) => {
   }
 });
 
-app.get('/userevents', verifyToken, async (req, res) => {
-  const userId = req.userId; // No need to check if userId is present here
+app.post('/userevents', verifyToken ,async (req, res) => {
+  const userId = req.body.userId; // No need to check if userId is present here
 
   try {
       // Fetch events where the user is a volunteer
