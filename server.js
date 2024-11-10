@@ -375,7 +375,7 @@ app.get('/hosted-events', verifyToken, async (req, res) => {
   }
 });
 
-app.get('/userevents', verifyToken, async (req, res) => {
+app.get('/userevents', async (req, res) => {
     const userId = req.userId;
 
     if (!userId) {
