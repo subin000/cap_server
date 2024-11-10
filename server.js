@@ -366,9 +366,10 @@ app.post('/create', verifyToken, async (req, res) => {
 });
 
 // Volunteer for an event
-app.post('/:eventId/volunteer', verifyToken, async (req, res) => {
+app.post('/:eventId/volunteer', async (req, res) => {
   const { eventId } = req.params;
   const userId = req.userId; // Get userId from the request object
+  console.log(userId);
 
   try {
     const event = await Event.findById(eventId);
@@ -401,7 +402,7 @@ app.get('/hosted-events', verifyToken, async (req, res) => {
   }
 });
 
-app.post('/userevents', verifyToken ,async (req, res) => {
+app.post('/userevents' ,async (req, res) => {
   const userId = req.body.userId; // No need to check if userId is present here
 
   try {
