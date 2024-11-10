@@ -167,8 +167,8 @@ app.post('/login', async (req, res) => {
       const user = await User.findOne({ mobileNumber });
       if (!user) return res.status(404).json({ message: 'User not found' });
 
-      const isValidOtp = otp === '123456'; // Simulated OTP verification
-      if (!isValidOtp) return res.status(401).json({ message: 'Invalid OTP' });
+      const isValidPin = await user.comparePin(pin);
+      if (!isValidPin) return res.status(401).json({ message: 'Invalid credentials' });
 
       const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '9h' });
       return res.status(200).json({ message: 'Login successful', token });
