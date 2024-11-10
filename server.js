@@ -375,26 +375,22 @@ app.get('/hosted-events', verifyToken, async (req, res) => {
   }
 });
 
-app.get('/userevents', async (req, res) => {
-    const userId = req.userId;
+app.get('/userevents', verifyToken, async (req, res) => {
+  const userId = req.userId; // No need to check if userId is present here
 
-    if (!userId) {
-        return res.status(400).json({ error: "User -ID header is missing" });
-    }
+  try {
+      // Fetch events where the user is a volunteer
+      const userEvents = await Event.find({ volunteers: userId });
 
-    try {
-        // Fetch events where the user is a volunteer
-        const userEvents = await Event.find({ volunteers: userId });
+      if (userEvents.length === 0) {
+          return res.status(404).json({ message: "No events found for this user." });
+      }
 
-        if (userEvents.length === 0) {
-            return res.status(404).json({ message: "No events found for this user." });
-        }
-
-        return res.status(200).json(userEvents);
-    } catch (error) {
-        console.error('Error fetching events:', error);
-        return res.status(500).json({ error: 'Internal Server Error' });
-    }
+      return res.status(200).json(userEvents);
+  } catch (error) {
+      console.error('Error fetching events:', error);
+      return res.status(500).json({ error: 'Internal Server Error' });
+  }
 });
 
 // Route to delete an event
