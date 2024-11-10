@@ -8,6 +8,9 @@ const axios = require('axios');
 const bodyParser = require('body-parser');
 const http = require("http");
 const { Server } = require("socket.io");
+const { GoogleGenerativeAI } = require("@google/generative-ai");
+const genAI = new GoogleGenerativeAI("AIzaSyAl-k30fenpNfcnkl1mmCeYRJzvALGH0Gk");
+const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 require('dotenv').config();
 
 // Initialize Express App
@@ -524,6 +527,32 @@ app.post('/personal-info/update', verifyToken, async (req, res) => {
       res.status(500).json({ message: 'Internal server error' });
   }
 });
+
+app.post("/chatbot", async (req, res) => {
+  try {
+    const userMessage = req.body.message;
+
+    // Define the system message: guide the model to stay within safety and security context
+    const systemMessage = `
+      You are a safety and security assistant. Provide only general advice related to safety, security, and self-help in a crisis. 
+      Limit your response to 1-2 sentences and focus on how the user can help themselves until help arrives. 
+      Avoid giving medical advice or personal emergency assistance.
+    `;
+
+    // Combine the system message and the user's message
+    const prompt = `${systemMessage}\nUser: ${userMessage}\nAssistant:`;
+
+    // Generate content using the Gemini model
+    const result = await model.generateContent(prompt);
+
+    // Handle response
+    res.json({ reply: result.response.text() });
+  } catch (error) {
+    console.error("Error during chatbot request:", error);
+    res.status(500).send("Error communicating with chatbot");
+  }
+});
+
 
 // Start Server with HTTP and WebSocket (Socket.io) support
 server.listen(PORT, () => {
