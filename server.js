@@ -141,7 +141,7 @@ app.post('/signup', async (req, res) => {
     const newUser = new User({ fullName, dob, gender, mobileNumber, email, pin });
     await newUser.save();
 
-    const token = jwt.sign({ userId: newUser._id }, process.env.JWT_SECRET, { expiresIn: '9h' });
+    const token = jwt.sign({ userId: newUser._id }, process.env.JWT_SECRET);
 
     res.status(201).json({ message: 'User created successfully', token });
   } catch (error) {
@@ -162,7 +162,7 @@ app.post('/login', async (req, res) => {
       const isValidPin = await user.comparePin(pin);
       if (!isValidPin) return res.status(401).json({ message: 'Invalid credentials' });
 
-      const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '9h' });
+      const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET);
       return res.status(200).json({ message: 'Login successful', token });
     }
 
@@ -173,7 +173,7 @@ app.post('/login', async (req, res) => {
       const isValidPin = await user.comparePin(pin);
       if (!isValidPin) return res.status(401).json({ message: 'Invalid credentials' });
 
-      const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '9h' });
+      const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET);
       return res.status(200).json({ message: 'Login successful', token });
     }
 
