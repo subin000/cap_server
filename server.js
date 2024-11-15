@@ -23,14 +23,6 @@ app.use(bodyParser.json({ limit: '50mb' }));
 app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
 app.use(express.json());
 
-// Setup Cloudinary
-const cloudinary = require('cloudinary').v2;
-cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_NAME,
-  api_key: process.env.CLOUDINARY_API,
-  api_secret: process.env.CLOUDINARY_SECRET
-});
-
 // Connect to MongoDB
 mongoose.connect(process.env.MONGO)
   .then(() => console.log('MongoDB connected'))
@@ -552,6 +544,16 @@ app.post("/chatbot", async (req, res) => {
     res.status(500).send("Error communicating with chatbot");
   }
 });
+
+
+app.post("/sms", async (req, res) => {
+  const no = req.body.no;
+  const msg = req.body.msg;
+
+  const whatsappLink = `https://wa.me/91${no}?text=${encodeURIComponent(msg)}`;
+  res.json({ whatsappLink }); // Send the link to the client
+});
+
 
 
 // Start Server with HTTP and WebSocket (Socket.io) support
