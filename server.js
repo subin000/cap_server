@@ -481,7 +481,7 @@ app.get('/news', async (req, res) => {
         q: '"India" AND ("disaster management" OR "natural disaster" OR "emergency response" OR "disaster relief" OR "crisis management")',
         language: 'en',
         sortBy: 'publishedAt',
-        apiKey: '1ee17a07805e4ab8b52f359a44e4e026',
+        apiKey: process.env.NEWSAPI,
       },
     });
     res.json(response.data);
